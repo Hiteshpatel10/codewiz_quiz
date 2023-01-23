@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "156251911206",
+    "project_id": "codewizquiz",
+    "storage_bucket": "codewizquiz.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:156251911206:android:f91622f50c5cab05bbe2e7",
+        "android_client_info": {
+          "package_name": "com.geekaid.codewiz_quiz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "156251911206-vouh9kt252n3mk51qr7c8s5gbtfnchd2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCaBuWrrLzPvp1LpY1Rlvd_wCd-pDtz0TA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "156251911206-vouh9kt252n3mk51qr7c8s5gbtfnchd2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
