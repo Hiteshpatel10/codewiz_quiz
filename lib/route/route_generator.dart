@@ -1,4 +1,6 @@
 import 'package:codewiz_quiz/screens/home_screen.dart';
+import 'package:codewiz_quiz/screens/question_screen.dart';
+import 'package:codewiz_quiz/screens/quiz_result_screen.dart';
 import 'package:flutter/material.dart';
 
 class RouteGenerator {
@@ -7,6 +9,15 @@ class RouteGenerator {
     switch (settings.name) {
       case '/':
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+
+      case '/quiz':
+        if (args is String) {
+          return MaterialPageRoute(builder: (_) => QuestionScreen(topic: args));
+        }
+        return _errorRoute();
+
+      case '/quiz-result':
+        return MaterialPageRoute(builder: (_) => const QuizResultScreen());
 
       default:
         return _errorRoute();
