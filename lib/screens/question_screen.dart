@@ -17,7 +17,7 @@ class QuestionScreen extends StatefulWidget {
 
 class _QuestionScreenState extends State<QuestionScreen> {
   var _choiceSelected = -1;
-  QuerySnapshot _quizSnapshot;
+  QuerySnapshot? _quizSnapshot;
 
   @override
   void initState() {
@@ -31,66 +31,78 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   void _onSkip(int val) {
     Provider.of<QuizProgress>(context, listen: false).questionIndex = val;
+    Provider.of<QuizProgress>(context, listen: false).questionSkipped += 1;
+    _choiceSelected = -1;
+  }
+
+  void _onSubmit(int correctOption) {
+    Provider.of<QuizProgress>(context, listen: false).questionIndex += 1;
+
+    if (_choiceSelected == correctOption) {
+      Provider.of<QuizProgress>(context, listen: false).correct += 1;
+    }
+
+    _choiceSelected = -1;
   }
 
   @override
   Widget build(BuildContext context) {
-    final questionIndex = Provider.of<QuizProgress>(context).questionIndex;
+    final provider = Provider.of<QuizProgress>(context);
+
+    if (_quizSnapshot == null) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    }
     return Scaffold(
       appBar: AppBar(title: Text(widget.topic)),
       body: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: FutureBuilder<QuerySnapshot>(
-            future: FirebaseFirestore.instance.collection('Android').get(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Text('Error = ${snapshot.error}');
-              }
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    const ProgressBar(),
-                    QuizQuestionWidget(
-                        question: snapshot.data!.docs[questionIndex]
-                            ['question']),
-                    const Gap(60),
-                    for (int i = 0; i < 4; i++)
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            _choiceSelected = i;
-                          });
-                        },
-                        child: QuizOptionWidget(
-                          isSelected: i == _choiceSelected ? true : false,
-                          option: snapshot.data!.docs[questionIndex]['options']
-                              [i],
-                          index: i + 1,
-                        ),
-                      ),
-                  ],
+        padding: const EdgeInsets.all(12.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const ProgressBar(),
+              Text(provider.correct.toString()),
+              Text(provider.questionSkipped.toString()),
+              QuizQuestionWidget(
+                  question: _quizSnapshot?.docs[provider.questionIndex]
+                      ['question']),
+              const Gap(60),
+              for (int i = 0; i < 4; i++)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _choiceSelected = i;
+                    });
+                  },
+                  child: QuizOptionWidget(
+                    isSelected: i == _choiceSelected ? true : false,
+                    option: _quizSnapshot?.docs[provider.questionIndex]
+                        ['options'][i],
+                    index: i + 1,
+                  ),
                 ),
-              );
-            },
-          )),
+            ],
+          ),
+        ),
+      ),
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _onSkip(provider.questionIndex + 1);
+              },
               child: const Text("Skip"),
             ),
             ElevatedButton(
-              onPressed: () {},
-              child: const Text("Next"),
+              onPressed: () {
+                _onSubmit(_quizSnapshot?.docs[provider.questionIndex]
+                    ['correctAnswerIndex']);
+              },
+              child: const Text("Submit"),
             ),
           ],
         ),

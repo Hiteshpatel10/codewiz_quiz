@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class QuizProgress extends ChangeNotifier {
   int _correct = 0;
   int _questionIndex = 0;
+  int _questionSkipped = 0;
 
   int get questionIndex => _questionIndex;
 
@@ -15,6 +16,13 @@ class QuizProgress extends ChangeNotifier {
 
   set correct(int val) {
     _correct = val;
+    notifyListeners();
+  }
+
+  int get questionSkipped => _questionSkipped;
+
+  set questionSkipped(int val) {
+    _questionSkipped = val;
     notifyListeners();
   }
 }
