@@ -15,19 +15,36 @@ class ProgressBar extends StatefulWidget {
 
 class _ProgressBarState extends State<ProgressBar> {
   late Timer _timer;
+  var ss = 0;
+  var min = 0;
+  var hh = 0;
 
   void startTimer() {
-    _progressValue = 0.0;
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
         setState(() {
-          _progressValue += 0.06;
-          if (_progressValue >= 1) timer.cancel();
+          if (ss < 60) {
+            ss++;
+          } else {
+            ss = 0;
+            if (min < 60) {
+              min++;
+            } else {
+              min = 0;
+              hh++;
+            }
+          }
         });
       },
     );
+  }
+
+  @override
+  void initState() {
+    startTimer();
+    super.initState();
   }
 
   @override
@@ -36,25 +53,34 @@ class _ProgressBarState extends State<ProgressBar> {
     super.dispose();
   }
 
-  double _progressValue = 0.0;
   @override
   Widget build(BuildContext context) {
     final questionIndex = Provider.of<QuizProgress>(context).questionIndex;
+    final totalQuestion =
+        Provider.of<QuizProgress>(context, listen: false).totalQuestion;
     return Column(
       children: [
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("$questionIndex/10"),
-          ),
-        ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
-            const Text('2 / 10 Time '),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("${questionIndex + 1} | 10"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    const Icon(Icons.timer),
+                    Text(
+                        "${hh.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:${ss.toString().padLeft(2, '0')}"),
+                  ],
+                ),
+              ],
+            ),
             const Gap(4),
             LinearProgressIndicator(
-              value: _progressValue,
+              value: (questionIndex.toDouble() + 1) / totalQuestion,
+              color: Colors.white,
             ),
           ],
         )

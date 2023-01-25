@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:codewiz_quiz/firestore/models/questions.dart';
 import 'package:codewiz_quiz/quiz_state_provider.dart';
 import 'package:codewiz_quiz/widgets/progress_bar.dart';
 import 'package:codewiz_quiz/widgets/quiz_option_widget.dart';
@@ -18,14 +19,21 @@ class QuestionScreen extends StatefulWidget {
 class _QuestionScreenState extends State<QuestionScreen> {
   var _choiceSelected = -1;
   QuerySnapshot? _quizSnapshot;
+  List<Map<String, dynamic>> quizData = [];
+  List<QuizQuestionModel> questionList = [];
 
   @override
   void initState() {
     FirebaseFirestore.instance.collection('Android').get().then((snapshot) {
       setState(() {
         _quizSnapshot = snapshot;
+        questionList = _quizSnapshot!.docs
+            .map((doc) =>
+                QuizQuestionModel.fromMap(doc.data() as Map<String, dynamic>))
+            .toList();
       });
     });
+
     super.initState();
   }
 
@@ -54,19 +62,26 @@ class _QuestionScreenState extends State<QuestionScreen> {
         child: CircularProgressIndicator(),
       );
     }
+
     return Scaffold(
-      appBar: AppBar(title: Text(widget.topic)),
+      appBar: AppBar(
+        title: Text(widget.topic),
+        centerTitle: true,
+        bottom: const PreferredSize(
+          preferredSize: Size.fromHeight(50),
+          child: Padding(
+            padding: EdgeInsets.all(12.0),
+            child: ProgressBar(),
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: SingleChildScrollView(
           child: Column(
             children: [
-              const ProgressBar(),
-              Text(provider.correct.toString()),
-              Text(provider.questionSkipped.toString()),
               QuizQuestionWidget(
-                  question: _quizSnapshot?.docs[provider.questionIndex]
-                      ['question']),
+                  question: questionList[provider.questionIndex].question),
               const Gap(60),
               for (int i = 0; i < 4; i++)
                 GestureDetector(
@@ -93,14 +108,37 @@ class _QuestionScreenState extends State<QuestionScreen> {
           children: [
             ElevatedButton(
               onPressed: () {
+                if (provider.questionIndex + 1 == provider.totalQuestion) {
+                  Navigator.pushNamed(context, '/quiz-result');
+                }
                 _onSkip(provider.questionIndex + 1);
               },
               child: const Text("Skip"),
             ),
             ElevatedButton(
               onPressed: () {
-                _onSubmit(_quizSnapshot?.docs[provider.questionIndex]
-                    ['correctAnswerIndex']);
+                if (provider.questionIndex + 1 == provider.totalQuestion) {
+                  Navigator.pushNamed(context, '/quiz-result');
+                }
+                _choiceSelected == -1
+                    ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Row(
+                          children: const [
+                            Icon(
+                              Icons.error_outline_outlined,
+                              color: Colors.white,
+                            ),
+                            Gap(4),
+                            Text("Please Select An Option")
+                          ],
+                        ),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0)),
+                        backgroundColor: Colors.deepOrange,
+                        duration: const Duration(seconds: 2),
+                      ))
+                    : _onSubmit(_quizSnapshot?.docs[provider.questionIndex]
+                        ['correctAnswerIndex']);
               },
               child: const Text("Submit"),
             ),
