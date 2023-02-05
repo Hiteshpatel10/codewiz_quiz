@@ -24,8 +24,10 @@ class HomeScreen extends StatelessWidget {
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
                 onTap: () {
-                  Navigator.of(context)
-                      .pushNamed('/quiz', arguments: quizTopics[index]['name']);
+                  // Navigator.of(context)
+                  //     .pushNamed('/quiz', arguments: quizTopics[index]['name']);
+                  Navigator.of(context).pushNamed('/quiz-options',
+                      arguments: quizTopics[index]['name']);
                 },
                 child: QuizLogoCard(item: quizTopics[index]));
           },

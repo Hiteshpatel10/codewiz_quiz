@@ -27,6 +27,12 @@ final Map<String, List<Color>> levelColors = {
   'Advances': [Colors.deepPurple[50]!, Colors.purple[100]!],
 };
 
+final List<Map<String, dynamic>> quizLevel = [
+  {'level': 'Beginner', 'icon': 'assets/icons/level1.png'},
+  {'level': 'Intermediate', 'icon': 'assets/icons/level2.png'},
+  {'level': 'Advance', 'icon': 'assets/icons/level3.png'},
+];
+
 final Map<String, List<Color>> titleColor = {
   'Android': [Colors.greenAccent, Colors.green],
   'C++': [Colors.blueAccent, Colors.blue],

@@ -1,10 +1,13 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class QuizProgress extends ChangeNotifier {
   int _correct = 0;
   int _questionIndex = 0;
   int _questionSkipped = 0;
-  int _totalQuestion = 10;
+  double _totalQuestion = 10.0;
+  String _quizLevel = "Beginner";
 
   int get questionIndex => _questionIndex;
 
@@ -27,10 +30,17 @@ class QuizProgress extends ChangeNotifier {
     notifyListeners();
   }
 
-  int get totalQuestion => _totalQuestion;
+  double get totalQuestion => _totalQuestion;
 
-  set totalQuestion(int val) {
+  set totalQuestion(double val) {
     _totalQuestion = val;
+    notifyListeners();
+  }
+
+  String get quizLevel => _quizLevel;
+
+  set quizLevel(String level) {
+    _quizLevel = level;
     notifyListeners();
   }
 }
