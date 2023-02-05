@@ -63,7 +63,8 @@ class _QuizOptionScreenState extends State<QuizOptionScreen> {
             style: TextStyle(fontSize: 18),
           ),
           onPressed: () {
-            Navigator.pushNamed(context, '/quiz', arguments: widget.topic);
+            Navigator.pushNamed(context, '/quiz',
+                arguments: [widget.topic, provider.quizLevel]);
           },
         ),
       ),

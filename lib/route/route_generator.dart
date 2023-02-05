@@ -12,8 +12,12 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const HomeScreen());
 
       case '/quiz':
-        if (args is String) {
-          return MaterialPageRoute(builder: (_) => QuestionScreen(topic: args));
+        if (args is List) {
+          return MaterialPageRoute(
+              builder: (_) => QuestionScreen(
+                    topic: args[0],
+                    level: args[1],
+                  ));
         }
         return _errorRoute();
 

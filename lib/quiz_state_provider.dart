@@ -1,5 +1,6 @@
 import 'dart:ffi';
 
+import 'package:codewiz_quiz/firestore/models/questions.dart';
 import 'package:flutter/material.dart';
 
 class QuizProgress extends ChangeNotifier {
@@ -8,6 +9,7 @@ class QuizProgress extends ChangeNotifier {
   int _questionSkipped = 0;
   double _totalQuestion = 10.0;
   String _quizLevel = "Beginner";
+  List<QuizQuestionModel> _questionList = [];
 
   int get questionIndex => _questionIndex;
 
@@ -41,6 +43,13 @@ class QuizProgress extends ChangeNotifier {
 
   set quizLevel(String level) {
     _quizLevel = level;
+    notifyListeners();
+  }
+
+  List<QuizQuestionModel> get questionList => _questionList;
+
+  set questionList(List<QuizQuestionModel> list) {
+    _questionList = list;
     notifyListeners();
   }
 }

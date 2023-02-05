@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 
 class QuestionScreen extends StatefulWidget {
   final String topic;
-  const QuestionScreen({required this.topic, super.key});
+  final String level;
+  const QuestionScreen({required this.topic, required this.level, super.key});
 
   @override
   State<QuestionScreen> createState() => _QuestionScreenState();
@@ -24,13 +25,19 @@ class _QuestionScreenState extends State<QuestionScreen> {
 
   @override
   void initState() {
-    FirebaseFirestore.instance.collection('Android').get().then((snapshot) {
+    FirebaseFirestore.instance
+        .collection(widget.topic)
+        .where('level', isEqualTo: widget.level)
+        .get()
+        .then((snapshot) {
       setState(() {
         _quizSnapshot = snapshot;
         questionList = _quizSnapshot!.docs
             .map((doc) =>
                 QuizQuestionModel.fromMap(doc.data() as Map<String, dynamic>))
             .toList();
+
+        questionList.shuffle();
       });
     });
 
@@ -56,6 +63,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<QuizProgress>(context);
+    provider.questionList =
+        questionList.sublist(0, provider.totalQuestion.toInt());
 
     if (_quizSnapshot == null) {
       return const Center(
@@ -81,7 +90,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
           child: Column(
             children: [
               QuizQuestionWidget(
-                  question: questionList[provider.questionIndex].question),
+                  question:
+                      provider.questionList[provider.questionIndex].question),
               const Gap(60),
               for (int i = 0; i < 4; i++)
                 GestureDetector(
@@ -92,8 +102,8 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   },
                   child: QuizOptionWidget(
                     isSelected: i == _choiceSelected ? true : false,
-                    option: _quizSnapshot?.docs[provider.questionIndex]
-                        ['options'][i],
+                    option: provider
+                        .questionList[provider.questionIndex].options[i],
                     index: i + 1,
                   ),
                 ),
