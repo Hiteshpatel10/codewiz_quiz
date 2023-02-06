@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:codewiz_quiz/firestore/models/questions.dart';
 import 'package:codewiz_quiz/quiz_state_provider.dart';
 import 'package:codewiz_quiz/widgets/progress_bar.dart';
 import 'package:codewiz_quiz/widgets/quiz_option_widget.dart';
@@ -19,58 +17,39 @@ class QuestionScreen extends StatefulWidget {
 
 class _QuestionScreenState extends State<QuestionScreen> {
   var _choiceSelected = -1;
-  QuerySnapshot? _quizSnapshot;
-  List<Map<String, dynamic>> quizData = [];
-  List<QuizQuestionModel> questionList = [];
 
-  @override
-  void initState() {
-    FirebaseFirestore.instance
-        .collection(widget.topic)
-        .where('level', isEqualTo: widget.level)
-        .get()
-        .then((snapshot) {
-      setState(() {
-        _quizSnapshot = snapshot;
-        questionList = _quizSnapshot!.docs
-            .map((doc) =>
-                QuizQuestionModel.fromMap(doc.data() as Map<String, dynamic>))
-            .toList();
-
-        questionList.shuffle();
-      });
-    });
-
-    super.initState();
-  }
-
-  void _onSkip(int val) {
-    Provider.of<QuizProgress>(context, listen: false).questionIndex = val;
-    Provider.of<QuizProgress>(context, listen: false).questionSkipped += 1;
+  void _onSkip() {
+    final provider = Provider.of<QuizProgress>(context, listen: false);
+    provider.questionIndex += 1;
+    provider.questionSkipped += 1;
     _choiceSelected = -1;
+
+    if (provider.questionIndex + 1 >= provider.totalQuestion) {
+      Navigator.popAndPushNamed(context, '/quiz-result');
+    }
   }
 
-  void _onSubmit(int correctOption) {
-    Provider.of<QuizProgress>(context, listen: false).questionIndex += 1;
+  void _onSubmit() {
+    final provider = Provider.of<QuizProgress>(context, listen: false);
+    provider.questionList[provider.questionIndex].choiceSelcted =
+        _choiceSelected;
 
-    if (_choiceSelected == correctOption) {
+    if (_choiceSelected ==
+        provider.questionList[provider.questionIndex].correctAnswerIndex) {
       Provider.of<QuizProgress>(context, listen: false).correct += 1;
     }
 
     _choiceSelected = -1;
+    provider.questionIndex += 1;
+
+    if (provider.questionIndex + 1 >= provider.totalQuestion) {
+      Navigator.popAndPushNamed(context, '/quiz-result');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<QuizProgress>(context);
-    provider.questionList =
-        questionList.sublist(0, provider.totalQuestion.toInt());
-
-    if (_quizSnapshot == null) {
-      return const Center(
-        child: CircularProgressIndicator(),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
@@ -93,7 +72,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
                   question:
                       provider.questionList[provider.questionIndex].question),
               const Gap(60),
-              for (int i = 0; i < 4; i++)
+              for (int i = 0;
+                  i <
+                      provider
+                          .questionList[provider.questionIndex].options.length;
+                  i++)
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -117,19 +100,11 @@ class _QuestionScreenState extends State<QuestionScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              onPressed: () {
-                if (provider.questionIndex + 1 == provider.totalQuestion) {
-                  Navigator.pushNamed(context, '/quiz-result');
-                }
-                _onSkip(provider.questionIndex + 1);
-              },
+              onPressed: _onSkip,
               child: const Text("Skip"),
             ),
             ElevatedButton(
               onPressed: () {
-                if (provider.questionIndex + 1 == provider.totalQuestion) {
-                  Navigator.pushNamed(context, '/quiz-result');
-                }
                 _choiceSelected == -1
                     ? ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                         content: Row(
@@ -147,8 +122,7 @@ class _QuestionScreenState extends State<QuestionScreen> {
                         backgroundColor: Colors.deepOrange,
                         duration: const Duration(seconds: 2),
                       ))
-                    : _onSubmit(_quizSnapshot?.docs[provider.questionIndex]
-                        ['correctAnswerIndex']);
+                    : _onSubmit();
               },
               child: const Text("Submit"),
             ),

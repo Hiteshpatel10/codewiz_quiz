@@ -15,36 +15,34 @@ class ProgressBar extends StatefulWidget {
 
 class _ProgressBarState extends State<ProgressBar> {
   late Timer _timer;
-  var ss = 0;
-  var min = 0;
-  var hh = 0;
 
-  void startTimer() {
+  void startTimer(QuizProgress provider) {
     const oneSec = Duration(seconds: 1);
     _timer = Timer.periodic(
       oneSec,
       (Timer timer) {
-        setState(() {
-          if (ss < 60) {
-            ss++;
+        if (provider.ss < 60) {
+          provider.ss++;
+        } else {
+          provider.ss = 0;
+          if (provider.mm < 60) {
+            provider.mm++;
           } else {
-            ss = 0;
-            if (min < 60) {
-              min++;
-            } else {
-              min = 0;
-              hh++;
-            }
+            provider.mm = 0;
+            provider.hh++;
           }
-        });
+        }
       },
     );
   }
 
   @override
   void initState() {
-    startTimer();
     super.initState();
+    Future.microtask(() async {
+      final provider = Provider.of<QuizProgress>(context, listen: false);
+      startTimer(provider);
+    });
   }
 
   @override
@@ -55,9 +53,8 @@ class _ProgressBarState extends State<ProgressBar> {
 
   @override
   Widget build(BuildContext context) {
-    final questionIndex = Provider.of<QuizProgress>(context).questionIndex;
-    final totalQuestion =
-        Provider.of<QuizProgress>(context, listen: false).totalQuestion;
+    final provider = Provider.of<QuizProgress>(context);
+
     return Column(
       children: [
         Column(
@@ -66,20 +63,22 @@ class _ProgressBarState extends State<ProgressBar> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text("${questionIndex + 1} | 10"),
+                Text(
+                    "${provider.questionIndex + 1} | ${provider.totalQuestion.toInt()}"),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     const Icon(Icons.timer),
                     Text(
-                        "${hh.toString().padLeft(2, '0')}:${min.toString().padLeft(2, '0')}:${ss.toString().padLeft(2, '0')}"),
+                        "${provider.hh.toString().padLeft(2, '0')}:${provider.mm.toString().padLeft(2, '0')}:${provider.ss.toString().padLeft(2, '0')}"),
                   ],
                 ),
               ],
             ),
             const Gap(4),
             LinearProgressIndicator(
-              value: (questionIndex.toDouble() + 1) / totalQuestion,
+              value:
+                  (provider.questionIndex.toDouble()) / provider.totalQuestion,
               color: Colors.white,
             ),
           ],

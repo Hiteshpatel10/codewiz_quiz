@@ -3,6 +3,15 @@ import 'package:flutter/material.dart';
 final List<Map<String, dynamic>> quizTopics = [
   {
     'name': 'Android',
+    'icon': 'assets/icons/android.png',
+    'questions': [
+      {'name': 'Beginner', 'questions': '25'},
+      {'name': 'Intermediate', 'questions': '30'},
+      {'name': 'Advances', 'questions': '26'}
+    ]
+  },
+  {
+    'name': 'C++',
     'icon': 'assets/icons/c++.png',
     'questions': [
       {'name': 'Beginner', 'questions': '10'},
@@ -11,8 +20,17 @@ final List<Map<String, dynamic>> quizTopics = [
     ]
   },
   {
-    'name': 'C++',
-    'icon': 'assets/icons/c++.png',
+    'name': 'SQL',
+    'icon': 'assets/icons/sql.png',
+    'questions': [
+      {'name': 'Beginner', 'questions': '10'},
+      {'name': 'Intermediate', 'questions': '20'},
+      {'name': 'Advances', 'questions': '20'}
+    ]
+  },
+  {
+    'name': 'DBMS',
+    'icon': 'assets/icons/dbms.png',
     'questions': [
       {'name': 'Beginner', 'questions': '10'},
       {'name': 'Intermediate', 'questions': '20'},
@@ -36,4 +54,6 @@ final List<Map<String, dynamic>> quizLevel = [
 final Map<String, List<Color>> titleColor = {
   'Android': [Colors.greenAccent, Colors.green],
   'C++': [Colors.blueAccent, Colors.blue],
+  'SQL': [Colors.pinkAccent, Colors.purple],
+  'DBMS': [Colors.cyanAccent, Colors.cyan],
 };

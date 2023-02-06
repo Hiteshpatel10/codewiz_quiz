@@ -23,15 +23,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -64,5 +58,25 @@ class DefaultFirebaseOptions {
     messagingSenderId: '156251911206',
     projectId: 'codewizquiz',
     storageBucket: 'codewizquiz.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyDZmTOBPf5GM1Y4Zu6kqc16WJXTOh3pnEY',
+    appId: '1:156251911206:ios:8069bd1fc83039dfbbe2e7',
+    messagingSenderId: '156251911206',
+    projectId: 'codewizquiz',
+    storageBucket: 'codewizquiz.appspot.com',
+    iosClientId: '156251911206-m2jum3fks3adm0hpm2pqu2nb4o6fi0fc.apps.googleusercontent.com',
+    iosBundleId: 'com.geekaid.codewizQuiz',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyDZmTOBPf5GM1Y4Zu6kqc16WJXTOh3pnEY',
+    appId: '1:156251911206:ios:8069bd1fc83039dfbbe2e7',
+    messagingSenderId: '156251911206',
+    projectId: 'codewizquiz',
+    storageBucket: 'codewizquiz.appspot.com',
+    iosClientId: '156251911206-m2jum3fks3adm0hpm2pqu2nb4o6fi0fc.apps.googleusercontent.com',
+    iosBundleId: 'com.geekaid.codewizQuiz',
   );
 }

@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.geekaid.codewiz_quiz">
    <application
-        android:label="codewiz_quiz"
+        android:label="codewiz quiz"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

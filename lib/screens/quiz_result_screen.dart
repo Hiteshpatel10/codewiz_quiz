@@ -1,3 +1,5 @@
+import 'package:codewiz_quiz/widgets/question_result.dart';
+import 'package:codewiz_quiz/widgets/result_overview.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,47 +16,40 @@ class QuizResultScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Result"),
         centerTitle: true,
-        bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(50),
-            child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                child: Row(
-                  children: const [
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: 32.0),
-                        child: Text(
-                          "Text",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white),
-                        ),
-                      ),
-                    ),
-                    Icon(
-                      Icons.filter_alt_off_rounded,
-                      size: 32.0,
-                    )
-                  ],
-                ))),
       ),
       body: Column(children: [
         Card(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Correct Answer : ${provider.correct}"),
-                  Text("Skipped : ${provider.questionSkipped}"),
-                  Text("Total Questions: ${provider.questionIndex}")
-                ]),
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              ResultOverView(
+                  heading: "Correct Answer :", value: "${provider.correct}"),
+              ResultOverView(
+                  heading: "Questions Skipped :",
+                  value: "${provider.questionSkipped}"),
+              ResultOverView(
+                  heading: "Incorrect Answers :",
+                  value:
+                      "${provider.totalQuestion.toInt() - provider.correct - provider.questionSkipped}"),
+              ResultOverView(
+                  heading: "Total Questions :",
+                  value: "${provider.totalQuestion.toInt()}"),
+              ResultOverView(
+                  heading: "Time Taken :",
+                  value:
+                      "${provider.hh.toString().padLeft(2, '0')}:${provider.mm.toString().padLeft(2, '0')}:${provider.ss.toString().padLeft(2, '0')}"),
+            ]),
           ),
-        )
+        ),
+        Expanded(
+          child: ListView(
+            children: List.generate(
+              provider.questionList.length,
+              (index) => QuestionResult(quiz: provider.questionList[index]),
+            ),
+          ),
+        ),
       ]),
     );
   }
